@@ -1,0 +1,32 @@
+# 必須技術スタック
+- Framework: Next.js 15 (App Router)
+- UI Library: React 19, Tailwind CSS, shadcn/ui, Lucide Icons
+- Backend & Auth: Supabase (Supabase SSR)
+- Database: Supabase (PostgreSQL, RLS有効化必須)
+- Payment: Stripe
+
+# 開発におけるベストプラクティス
+
+## 1. Next.js 15
+- 基本的にすべてのコンポーネントはServer Component (`page.tsx`, `layout.tsx`) とし、インタラクティブな要素が必要な末端のコンポーネントにのみ `use client` を宣言する。
+- データの取得はServer Componentで行い、PropsとしてClient Componentに渡すこと。
+- データ変更（Mutation）はServer Actionsを活用する。
+- API Routes (Route Handlers) はWebhook等で必要な場合のみとし、基本機能はServer Actionsで完結させること。
+
+## 2. Supabase
+- 認証には `@supabase/ssr` を使用し、Middleware (`middleware.ts`) にてセッションの同期とルート保護（未ログイン時のリダイレクト）を必ず実装すること。
+- DBの読み書きはすべて `supabase-js` を介して行い、直接のSQL発行は避けること。
+- セキュリティのため、すべてのテーブルでRLS (Row Level Security) を必ず有効化し、適切なポリシー（ユーザー自身のデータのみ参照・更新可能）を設定すること。
+
+## 3. Stripe
+- 決済処理はStripe Checkoutを利用し、クライアント側でStripe Elementsを直接構築しない方針とする。
+- StripeのWebhookエンドポイントを作成し、サブスクリプションの課金成功時にSupabaseのProfilesテーブル等にクレジットを付与する処理を連携させること。
+
+## 4. UI/UX
+- デザインはTailwind CSSを使用し、「モダンで洗練された（ガラスモーフ、ダークモード対応、滑らかなアニメーション）」スタイルを心がける。
+- 汎用的なUIパーツには `shadcn/ui` を積極的に導入して一貫性を保つこと。
+
+# エージェント行動規範 (AI向け)
+1. 修正を行う際は常にこのベストプラクティスを遵守すること。
+2. もし要件定義書 (`docs/REQUIREMENTS.md`) やタスクリスト (`docs/TODO.md`) があれば、常にその内容を参照して実装方針と矛盾がないか確認すること。
+3. エラーが出た場合は勝手に複雑なライブラリを追加せず、Next.js/Supabaseの公式ドキュメントに沿った標準機能での解決を図ること。
