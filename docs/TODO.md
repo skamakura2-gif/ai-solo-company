@@ -10,7 +10,7 @@
 
 ## Phase 2: フロントエンドベースの構築（担当：Cursor, CEO）
 - [x] Next.js 15 (App Router) プロジェクトの初期化 (`npx create-next-app@latest`)
-- [ ] Tailwind CSS と shadcn/ui のセットアップ
+- [x] Tailwind CSS と shadcn/ui のセットアップ
 - [ ] ホーム画面（LP）のUI構築
 - [ ] 共通コンポーネント（ヘッダー、フッターなど）の実装
 
