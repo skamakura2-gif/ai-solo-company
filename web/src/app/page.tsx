@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const PRESETS = [
@@ -132,6 +133,13 @@ export default function Home() {
             Reset
           </Button>
         </div>
+
+        <Link
+          href="/rikkunshito"
+          className="mt-4 text-xs tracking-[0.3em] text-zinc-400 transition hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-100"
+        >
+          → 漢方アーカイブ｜六君子湯
+        </Link>
       </main>
     </div>
   );
