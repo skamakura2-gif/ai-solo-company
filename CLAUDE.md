@@ -96,9 +96,24 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 ## デプロイに関する注意
 
+### ⚠️ よくある再発エラー: `The specified Root Directory "web" does not exist.`
+
+このエラーは **Vercel ダッシュボードの Root Directory 設定が `web` のまま**になっている場合に発生します。
+**AI エージェントからは Vercel ダッシュボード設定を変更できません。** CEO（人間）が手動で
+`Settings → General → Root Directory` を **空欄** に変更し、Redeploy する必要があります。
+詳細手順は `README.md` を参照。
+
+このエラーが出ているときに AI が取るべき行動:
+
+1. **コード側を「`web/` に戻す」修正は絶対にしない**（過去に往復が起きており、CLAUDE.md の方針に反する）。
+2. リポジトリの状態を確認し、ルートに `package.json` / `next.config.ts` / `src/` が揃っていることを確かめる。
+3. 揃っていれば**コード側は正しい**。CEO に Vercel ダッシュボード操作を依頼する。
+4. 余計な `vercel.json` を作らない（`rootDirectory` フィールドは存在せず、上書き不可）。
+
+### その他
+
 - Next.js プロジェクトはリポジトリルートにある。`web/` サブディレクトリは廃止済み。
 - Vercel プロジェクトの **Settings → General → Root Directory** は **空欄（= リポジトリルート）** にすること。
-  以前 `web` を指定していた場合は、空欄に戻して再デプロイが必要。
 - `vercel.json` は不要（Next.js は Vercel が自動検出する）。
 
 @AGENTS.md
