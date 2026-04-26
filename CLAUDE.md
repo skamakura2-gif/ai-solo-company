@@ -1,7 +1,38 @@
-# Claude Code へのガイド（リポジトリルート）
+# Claude Code へのガイド
 
-このファイルはリポジトリ全体に適用される Claude Code 向けのガイドです。
-`web/CLAUDE.md` はサブプロジェクト固有のガイドなので、両方を読んでください。
+このファイルはClaude Code（AIエージェント）が最初に読む引き継ぎ文書です。
+作業を始める前に必ず `docs/TODO.md` を確認し、未完了の自分担当タスクから着手してください。
+
+## プロジェクト概要
+
+個人目標管理Webアプリ（OKRトラッカー）の開発プロジェクトです。
+- フレームワーク: Next.js 16 (App Router) + TypeScript
+- スタイリング: Tailwind CSS v4 + shadcn/ui
+- バックエンド: Supabase（予定）
+
+## ディレクトリ構成
+
+Next.js プロジェクトはリポジトリルートに直接配置されています
+（Vercel が自動検出できるようにするため。`web/` サブディレクトリは廃止）。
+
+```
+ai-solo-company/
+├── docs/
+│   ├── TODO.md            # 全エージェント共通のタスクリスト（最重要）
+│   ├── REQUIREMENTS.md    # 要件定義
+│   └── DATABASE_SCHEMA.md # DB設計
+├── agents/
+│   └── claude-code-role.md # Claude Codeの役割定義
+├── src/
+│   ├── app/                # App Router のページ群
+│   ├── components/ui/      # shadcn/ui コンポーネント
+│   └── lib/
+├── public/
+├── package.json
+├── next.config.ts
+├── tsconfig.json
+└── CLAUDE.md / AGENTS.md
+```
 
 ## 出力ルール
 
@@ -10,11 +41,10 @@
 作業完了時に提示する URL（デプロイ URL、プレビュー URL、PR URL、Issue URL、
 ドキュメント URL など）は、**省略せず全文をそのまま貼り付ける**こと。
 
-- ❌ 悪い例: 「Vercel のプレビュー URL で確認できます」
-- ❌ 悪い例: 「[こちら](https://...)」のようにリンクテキストだけ表示
-- ❌ 悪い例: `https://example.vercel.app/...`（末尾を `...` で省略）
-- ✅ 良い例: `https://ai-solo-company-abc123.vercel.app/rikkunshito`
-  をそのまま全文で本文に記載する
+- 悪い例: 「Vercel のプレビュー URL で確認できます」
+- 悪い例: 「[こちら](https://...)」のようにリンクテキストだけ表示
+- 悪い例: `https://example.vercel.app/...`（末尾を `...` で省略）
+- 良い例: `https://ai-solo-company-lwcp.vercel.app/rikkunshito` をそのまま全文で記載
 
 対象となる主な URL:
 
@@ -23,13 +53,13 @@
 - Supabase / 外部ダッシュボードへのリンク
 - 生成したドキュメントやデモページの URL
 
-URL を載せる時は、ユーザーがそのままコピーしてブラウザに貼れる形で
-（クエリパラメータやハッシュも含めて）記載すること。Markdown の
-リンク記法を使う場合でも、URL 本文も併記する：
+ユーザーがそのままコピーしてブラウザに貼れる形で（クエリパラメータや
+ハッシュも含めて）記載すること。Markdown のリンク記法を使う場合でも、
+URL 本文も併記する：
 
 ```
-デプロイ URL: https://ai-solo-company.vercel.app/rikkunshito
-（[リンク](https://ai-solo-company.vercel.app/rikkunshito)）
+デプロイ URL: https://ai-solo-company-lwcp.vercel.app/rikkunshito
+（[リンク](https://ai-solo-company-lwcp.vercel.app/rikkunshito)）
 ```
 
 ### 完了報告のテンプレート
@@ -40,22 +70,35 @@ URL を載せる時は、ユーザーがそのままコピーしてブラウザ�
 2. 関連 URL（デプロイ URL / PR URL / コミット URL を**全文**で）
 3. 残課題があれば箇条書きで
 
-## プロジェクト構成
+## あなた（Claude Code）の担当タスク
 
+`docs/TODO.md` のPhase 3（バックエンド・インフラ構築）が主な担当です。
+
+- Supabaseプロジェクトの作成と環境変数への追加
+- テーブルの構築とマイグレーションの実行
+- RLS (Row Level Security) ポリシーの設定
+- Supabase SSRを用いた認証機能の組み込み
+
+## 作業ルール
+
+1. 作業を始める前に `git pull` で最新状態を取得する
+2. タスクが完了したら `docs/TODO.md` の該当項目を `[x]` に更新する
+3. 作業完了後は `git add . && git commit -m "作業内容の説明"` でコミットする
+4. 最後に `git push` でGitHubへ反映する
+
+## 環境変数
+
+`.env.local` ファイルをリポジトリルート（= プロジェクトルート）に作成し、以下を設定する:
 ```
-ai-solo-company/
-├── CLAUDE.md            # このファイル（リポジトリ全体のガイド）
-├── vercel.json          # Vercel 設定（web/ をビルド対象にする）
-├── docs/                # 要件定義 / TODO / DB スキーマ
-├── agents/              # 各エージェントの役割定義
-└── web/                 # Next.js 16 プロジェクト
-    ├── CLAUDE.md        # web 配下の作業ガイド
-    └── src/app/
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 ## デプロイに関する注意
 
-- 本リポジトリは monorepo 構成で、Next.js プロジェクトは `web/` 配下にある
-- Vercel は `vercel.json`（リポジトリルート）の設定で `web/` をビルドする
-- `vercel.json` を変更する場合は、Vercel ダッシュボードの Root Directory 設定と
-  どちらか一方に統一すること（両方設定すると衝突する可能性がある）
+- Next.js プロジェクトはリポジトリルートにある。`web/` サブディレクトリは廃止済み。
+- Vercel プロジェクトの **Settings → General → Root Directory** は **空欄（= リポジトリルート）** にすること。
+  以前 `web` を指定していた場合は、空欄に戻して再デプロイが必要。
+- `vercel.json` は不要（Next.js は Vercel が自動検出する）。
+
+@AGENTS.md
