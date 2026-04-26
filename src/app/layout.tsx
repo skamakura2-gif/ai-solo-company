@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "シンプルタイマー",
-  description: "プリセットから時間を選んで使えるシンプルなカウントダウンタイマー",
+  title: "六君子湯 | RIKKUNSHITO",
+  description:
+    "胃のもたれ、食欲不振に。八つの生薬で構成される伝統的な漢方処方「六君子湯」の効能・構成生薬・服用方法を一覧できる情報サイト。",
 };
 
 export default function RootLayout({
