@@ -21,6 +21,7 @@ type LibraryHit = {
 
 type ApiResponse = {
   count: number;
+  demo?: boolean;
   query: {
     lat: number | null;
     lng: number | null;
@@ -58,7 +59,7 @@ function formatDistance(km: number | null): string {
   return `${km.toFixed(2)} km`;
 }
 
-export default function LibrariesPage() {
+export default function HomePage() {
   const [mode, setMode] = useState<Mode>("geo");
   const [pref, setPref] = useState<string>("東京都");
   const [city, setCity] = useState<string>("");
@@ -82,9 +83,10 @@ export default function LibrariesPage() {
       if (args.kind === "geo") {
         params.set("lat", String(args.lat));
         params.set("lng", String(args.lng));
+      } else if (args.city.trim()) {
+        params.set("city", `${args.pref}${args.city.trim()}`);
       } else {
-        if (args.city.trim()) params.set("city", `${args.pref}${args.city.trim()}`);
-        else params.set("pref", args.pref);
+        params.set("pref", args.pref);
       }
       params.set("limit", "20");
       const res = await fetch(`/api/libraries?${params.toString()}`, {
@@ -149,7 +151,7 @@ export default function LibrariesPage() {
   }, [result]);
 
   return (
-    <div className="flex flex-1 flex-col bg-gradient-to-b from-slate-50 to-white text-slate-900">
+    <div className="flex min-h-full flex-col bg-gradient-to-b from-slate-50 to-white text-slate-900">
       <header className="border-b border-slate-200 bg-white/80 backdrop-blur">
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between px-6 py-5">
           <div className="flex items-center gap-3">
@@ -269,9 +271,7 @@ export default function LibrariesPage() {
                   </select>
                 </label>
                 <label className="flex flex-col gap-1">
-                  <span className="text-xs text-slate-500">
-                    市区町村（任意）
-                  </span>
+                  <span className="text-xs text-slate-500">市区町村（任意）</span>
                   <input
                     type="text"
                     value={city}
@@ -297,6 +297,25 @@ export default function LibrariesPage() {
         {error && (
           <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
+          </div>
+        )}
+
+        {result?.demo && !error && (
+          <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            <strong>デモモード</strong>:{" "}
+            <code className="rounded bg-amber-100 px-1">CALIL_APP_KEY</code>{" "}
+            が未設定のため、サンプルの図書館データを表示しています。
+            実データを取得するには{" "}
+            <a
+              href="https://calil.jp/api/dashboard/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              カーリル API ダッシュボード
+            </a>
+            でキーを発行し、<code className="rounded bg-amber-100 px-1">.env.local</code>{" "}
+            に設定してください。
           </div>
         )}
 
