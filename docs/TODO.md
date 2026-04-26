@@ -15,6 +15,13 @@
 - [ ] 共通コンポーネント（ヘッダー、フッターなど）の実装
 
 ## Phase 3: バックエンド・インフラ構築（担当：Claude Code, Antigravity）
+
+> ### ⚠️ CEO 手動対応が必要なタスク（AI からは実施不可）
+> - [ ] **Vercel ダッシュボードで Root Directory を空欄に設定する**
+>   （`Settings → General → Root Directory` を空欄に変更し、Redeploy）
+>   → 詳細は `README.md` の「Vercel デプロイ前に必ず確認すること」を参照。
+>   → これを行わないと `The specified Root Directory "web" does not exist.` で毎回ビルド失敗します。
+
 - [ ] Supabase プロジェクトの作成と環境変数への追加
 - [ ] テーブルの構築とマイグレーションの実行
 - [ ] RLS (Row Level Security) ポリシーの設定
