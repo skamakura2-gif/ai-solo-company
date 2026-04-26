@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chirp
 
-## Getting Started
+シンプルな X (旧 Twitter) 風つぶやきアプリ。Next.js 16 + Supabase で作られた最小実装です。
 
-First, run the development server:
+## 機能
+
+- メールアドレス + パスワードによる新規登録 / ログイン / ログアウト (二段階認証なし)
+- 1〜280 文字のつぶやき投稿
+- 全ユーザーの投稿を新しい順に表示するタイムライン
+- 自分の投稿の削除
+
+## 技術スタック
+
+- Next.js 16 (App Router, Server Components, Server Actions)
+- React 19, Tailwind CSS v4, shadcn/ui
+- Supabase (Postgres + Auth + RLS), `@supabase/ssr`
+
+## セットアップ
+
+### 1. Supabase プロジェクトを用意
+
+1. <https://supabase.com> でプロジェクトを作成。
+2. Project Settings → API から **Project URL** と **anon public key** を控える。
+3. SQL Editor で `../supabase/migrations/0001_init.sql` を実行する。
+   - `profiles` / `posts` テーブル、`posts_with_author` ビュー、RLS、新規ユーザー用トリガーが作られます。
+4. Authentication → Providers → Email で「Confirm email」を **OFF** にすると、確認メールなしですぐにログイン可能です (動作確認向け)。
+
+### 2. 環境変数
+
+`web/.env.example` をコピーして `web/.env.local` を作成し、値を埋めます:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR-PROJECT-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`.env*` は `.gitignore` で除外されているため GitHub にコミットされません。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. ローカル起動
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+<http://localhost:3000> にアクセスすると `/login` にリダイレクトされます。
+新規登録 → タイムライン → つぶやき投稿、と一通り操作できます。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## デプロイ
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- このリポジトリを GitHub にプッシュした上で、Vercel など Next.js 対応プラットフォームに接続してください。
+- ホスティング側のダッシュボードで `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` を環境変数として設定します (リポジトリにはコミットしません)。
 
-## Deploy on Vercel
+## ディレクトリ
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+web/
+├── src/
+│   ├── proxy.ts                       # Next 16 Proxy (旧 Middleware): セッション同期
+│   ├── app/
+│   │   ├── page.tsx                   # `/` -> /login or /timeline
+│   │   ├── login/                     # ログインページ + フォーム
+│   │   ├── signup/                    # 新規登録ページ + フォーム
+│   │   ├── timeline/                  # タイムライン (投稿/一覧/削除)
+│   │   └── actions/                   # Server Actions (auth, posts)
+│   ├── components/ui/button.tsx
+│   └── lib/
+│       ├── utils.ts
+│       └── supabase/
+│           ├── client.ts              # Browser client
+│           ├── server.ts              # Server Components / Actions client
+│           └── proxy.ts               # Proxy 用 updateSession
+└── ../supabase/migrations/0001_init.sql
+```

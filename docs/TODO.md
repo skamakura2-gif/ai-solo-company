@@ -1,30 +1,23 @@
-# Vibe Coding: 開発TODOリスト
+# Chirp: 開発 TODO リスト
 
-これは「一人企業」に関わる全エージェント（Antigravity, Cursor, Claude Code）とCEO（あなた）が共通で参照するTODOリストです。
-自分が担当するタスクがある場合はここを確認し、作業が終わったら `[x]` をつけてください。
+「Chirp」(X 風つぶやきアプリ) の最小実装タスクです。
 
-## Phase 1: 要件定義・設計（担当：CEO, Antigravity）
-- [x] どのようなアプリを作成するかアイデアを決定する
-- [x] ターゲットユーザー、使用機能、マネタイズ方法などの要件定義文を `docs/REQUIREMENTS.md` にまとめる
-- [x] データベースのテーブル設計案を作成する
+## Phase 1: 要件定義・設計
+- [x] アプリの方向性を決定 (X 風シンプルつぶやきアプリ)
+- [x] `docs/REQUIREMENTS.md` の更新
+- [x] `docs/DATABASE_SCHEMA.md` の更新
+- [x] SQL マイグレーション (`supabase/migrations/0001_init.sql`) の作成
 
-## Phase 2: フロントエンドベースの構築（担当：Cursor, CEO）
-- [x] Next.js 15 (App Router) プロジェクトの初期化 (`npx create-next-app@latest`)
-- [x] Tailwind CSS と shadcn/ui のセットアップ
-- [ ] ホーム画面（LP）のUI構築
-- [ ] 共通コンポーネント（ヘッダー、フッターなど）の実装
+## Phase 2: 実装 (フロント + バックエンド)
+- [x] Next.js 16 + Tailwind v4 + shadcn/ui のセットアップ (既存)
+- [x] `@supabase/ssr` 導入と client/server/proxy ヘルパー作成
+- [x] `proxy.ts` (Next 16) でセッション同期 + 未ログインリダイレクト
+- [x] ログイン / 新規登録ページ + Server Actions
+- [x] タイムラインページ (投稿フォーム + 一覧 + 削除)
+- [x] `.env.example` 追加 / `.env*` を gitignore
 
-## Phase 3: バックエンド・インフラ構築（担当：Claude Code, Antigravity）
-- [ ] Supabase プロジェクトの作成と環境変数への追加
-- [ ] テーブルの構築とマイグレーションの実行
-- [ ] RLS (Row Level Security) ポリシーの設定
-- [ ] Supabase SSR を用いた認証機能（新規登録・ログイン・セッション管理）の組み込み
-
-## Phase 4: 決済・連携（担当：Claude Code, Cursor）
-- [ ] Stripe APIの導入
-- [ ] プラン一覧画面（価格表UI）の実装
-- [ ] Stripe Checkout決済エンドポイント・Webhookの実装
-- [ ] 課金成功時、Supabaseへのクレジット付与・プラン更新の仕組みを作成
-
----
-※ 各エージェントはこのリストを定期的に確認し、進行中のタスクを自律的に進めてください。
+## Phase 3: 動作確認 (CEO 担当)
+- [ ] Supabase プロジェクトを作成し、`web/.env.local` に URL と anon key を設定
+- [ ] Supabase SQL エディタで `supabase/migrations/0001_init.sql` を実行
+- [ ] `npm run dev` でサインアップ → 投稿 → 削除 → ログアウトを通しで確認
+- [ ] (任意) Vercel など Next.js 対応プラットフォームへデプロイ
